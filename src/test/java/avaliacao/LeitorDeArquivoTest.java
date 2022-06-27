@@ -3,11 +3,9 @@ package avaliacao;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import org.junit.jupiter.api.Test;
 
@@ -19,27 +17,17 @@ public class LeitorDeArquivoTest {
 	@Test
 	public void lerUmArquivoComVariasLinhas() throws IOException {
 		LeitorDeArquivo leitor = new LeitorDeArquivo();
-		List<Cidadao> cidadaos = new ArrayList<Cidadao>();
-
-		Scanner in = new Scanner(new FileReader("nlinhas.txt"));
-		in.nextLine();
-		while (in.hasNextLine()) {
-			String line = in.nextLine();
-			String[] colunas = line.split("\\|");
-			Cidadao dados = new Cidadao();
-			try {
-				dados.setNome(colunas[0].trim());
-				dados.setIdade(colunas[1].trim());
-				dados.setMunicipio(colunas[2].trim());
-				dados.setEstado(colunas[3].trim());
-				cidadaos.add(dados);
-			} catch (Exception e) {
-				System.out.println("Erro : " + e);
-			}
-
-		}
 		List<Cidadao> lerVariasLinhas = leitor.lerTxt("nlinhas.txt", "\\|");
-		assertEquals(cidadaos.hashCode(), lerVariasLinhas.hashCode());
+
+		List<Cidadao> cidadaosEsperados = new ArrayList<Cidadao>();
+
+		cidadaosEsperados.add(new Cidadao("Antonio Carlos", "43", "São Tomé das Letras", "MG"));
+		cidadaosEsperados.add(new Cidadao("Cláudia Pereira", "20", "Aparecida", "SP"));
+		cidadaosEsperados.add(new Cidadao("José dos Santos", "30", "Manaus", "AM"));
+		lerVariasLinhas.containsAll(cidadaosEsperados);
+
+		assertEquals(cidadaosEsperados, lerVariasLinhas);
+
 	}
 
 	@Test
@@ -73,9 +61,3 @@ public class LeitorDeArquivoTest {
 	}
 
 }
-
-
-
-
-
-
