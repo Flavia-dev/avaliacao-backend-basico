@@ -17,7 +17,6 @@ public class Main {
 		CidadaoDAO dao = new CidadaoDAO();
 
 		List<Cidadao> cidadaos = leitor.lerTxt("nlinhas.txt", "\\|");
-		System.out.println(cidadaos);
 		dao.salvar(cidadaos);
 
 		System.out.println("Cidadãos da região sudeste:");

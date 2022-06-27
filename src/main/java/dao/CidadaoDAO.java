@@ -22,13 +22,11 @@ public class CidadaoDAO {
 	};
 
 	public void salvar(List<Cidadao> cidadaos) throws SQLException {
-		List<Cidadao> pessoas = new ArrayList<>();
-		pessoas.addAll(cidadaos);
 
+		ConnectionFactory factory = new ConnectionFactory();
+		Connection con = factory.recuperarConexao();
+		
 		for (Cidadao cidadao : cidadaos) {
-
-			ConnectionFactory factory = new ConnectionFactory();
-			Connection con = factory.recuperarConexao();
 
 			try (PreparedStatement stm = con.prepareStatement("INSERT INTO LOGRADOUROS(municipio, estado) VALUES(?,?)",
 					Statement.RETURN_GENERATED_KEYS))
@@ -41,14 +39,16 @@ public class CidadaoDAO {
 				while (rst.next()) {
 					Integer id = rst.getInt(1);
 					int id_logradouro = id;
-					PreparedStatement stm1 = con
-							.prepareStatement("INSERT INTO PESSOAS(nome, idade,id_logradouro) VALUES(?,?,?)");
-					String nome = cidadao.getNome();
-					String idade = cidadao.getIdade();
-					stm1.setString(1, nome);
-					stm1.setString(2, idade);
-					stm1.setString(3, Integer.toString(id_logradouro));
-					stm1.execute();
+					try (PreparedStatement stm1 = con
+							.prepareStatement("INSERT INTO PESSOAS(nome, idade,id_logradouro) VALUES(?,?,?)")) {
+
+						String nome = cidadao.getNome();
+						String idade = cidadao.getIdade();
+						stm1.setString(1, nome);
+						stm1.setString(2, idade);
+						stm1.setString(3, Integer.toString(id_logradouro));
+						stm1.execute();
+					}
 				}
 			}
 		}
@@ -57,7 +57,7 @@ public class CidadaoDAO {
 
 	public List<Cidadao> buscarSomenteOsDaRegiaoSudeste() throws SQLException {
 
-		List<Cidadao> cidadaos = new ArrayList<Cidadao>();
+		List<Cidadao> cidadaos = new ArrayList<Cidadao>();		
 		String sql = "SELECT P.NOME,P.IDADE, L.MUNICIPIO, L.ESTADO FROM PESSOAS P INNER JOIN LOGRADOUROS L ON L.ID = P.ID_LOGRADOURO "
 				+ "WHERE L.ESTADO='SP' OR L.ESTADO='RJ' OR L.ESTADO='MG' OR L.ESTADO='ES'";
 
